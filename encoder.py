@@ -18,7 +18,6 @@ class Encoder(tf.keras.layers.Layer):
         self.dropout = tf.keras.layers.Dropout(rate)
         
     def call(self, x, training, mask):
-        logger.info("Encoder Start")
         seq_len = tf.shape(x)[1]
 
         x = self.embedding(x)
