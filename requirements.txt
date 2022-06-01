@@ -1,8 +1,4 @@
 tensorflow
 transformers
-time
 joblib
 numpy
-logging
-queue
-operator

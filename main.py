@@ -192,7 +192,7 @@ def main(transformer):
         
         print ('Epoch {} Loss {:.4f}'.format(epoch + 1, train_loss.result()))
         print ('Time taken for 1 epoch: {} secs\n'.format(time.time() - start))
-    return val_input, val_input
+    return val_input, val_output
 
 if __name__ == "__main__":
     word2Topic = joblib.load('word2Topic.jl')
