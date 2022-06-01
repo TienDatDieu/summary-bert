@@ -18,7 +18,6 @@ class Decoder(tf.keras.layers.Layer):
     
     def call(self, x, enc_output, training , look_ahead_mask, padding_mask):
         logger.info("Decoder Start")
-        print("Decoder Start")
         seq_len = tf.shape(x)[1]
         attention_weights = {}
 
