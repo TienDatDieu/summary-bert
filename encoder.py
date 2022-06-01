@@ -19,6 +19,7 @@ class Encoder(tf.keras.layers.Layer):
         
     def call(self, x, training, mask):
         logger.info("Encoder Start")
+        print("Encoder Start")
         seq_len = tf.shape(x)[1]
 
         x = self.embedding(x)

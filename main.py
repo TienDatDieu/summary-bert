@@ -18,6 +18,7 @@ train_loss = tf.keras.metrics.Mean(name='train_loss')
 
 from queue import PriorityQueue
 import operator
+from log_manager import logger
 
 
 
@@ -84,14 +85,12 @@ def evaluate_beam(input_document, n_best, k_beam, transformer):
             dec_padding_mask
         )
         predictions = predictions[: ,-1:, :]
-        print(predictions[0][0].shape)
         sorted_probs = tf.sort(predictions[0][0], axis=-1, direction = 'DESCENDING') 
         sorted_indices = tf.argsort(predictions[0][0], axis=-1, direction = 'DESCENDING')
         # lấy ra prob từ prediction
         # sort prob đó giảm dần 
         for i in range(n_best):
             decoded_token = sorted_indices[i]
-            print(decoded_token.numpy())
             log_prob = sorted_probs[i]
     
             next_node = BeamSearchNode(prev_node=node, token_id=decoded_token, log_prob=node.log_prob + log_prob)
@@ -184,9 +183,10 @@ def main(transformer):
         if (epoch + 1) % 5 == 0:
             ckpt_save_path = ckpt_manager.save()
             print ('Saving checkpoint for epoch {} at {}'.format(epoch+1, ckpt_save_path))
+            logger.info('Saving checkpoint for epoch {} at {}'.format(epoch+1, ckpt_save_path))
         
-        print ('Epoch {} Loss {:.4f}'.format(epoch + 1, train_loss.result()))
-        print ('Time taken for 1 epoch: {} secs\n'.format(time.time() - start))
+        logger.info('Epoch {} Loss {:.4f}'.format(epoch + 1, train_loss.result()))
+        logger.info('Time taken for 1 epoch: {} secs\n'.format(time.time() - start))
     return val_input, val_output
 
 if __name__ == "__main__":
@@ -222,6 +222,7 @@ if __name__ == "__main__":
                     else:
                         sentence_result.append(tokenizer.decode(s.numpy()))
             print(sentence_result)
+            logger.info(sentence_result)
     
     
 

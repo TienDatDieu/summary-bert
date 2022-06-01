@@ -1,6 +1,7 @@
 import tensorflow as tf
 from helper import * 
 from decoderLayer import DecoderLayer
+from log_manager import logger
 #@title
 class Decoder(tf.keras.layers.Layer):
     def __init__(self, num_layers, d_model, num_heads, dff, target_vocab_size, maximum_position_encoding, rate=0.1):
@@ -16,6 +17,8 @@ class Decoder(tf.keras.layers.Layer):
         self.dropout = tf.keras.layers.Dropout(rate)
     
     def call(self, x, enc_output, training , look_ahead_mask, padding_mask):
+        logger.info("Decoder Start")
+        print("Decoder Start")
         seq_len = tf.shape(x)[1]
         attention_weights = {}
 

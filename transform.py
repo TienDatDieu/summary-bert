@@ -21,6 +21,7 @@ class TransformerModel(tf.keras.Model):
     
     def call(self, inp, tar, training, enc_padding_mask, look_ahead_mask, dec_padding_mask, alpha = 0):
         logger.info("Before Encoder and Decoder")
+        print("Before Encoder and Decoder")
         enc_output = self.encoder(inp, training, enc_padding_mask)
         dec_output, attention_weights = self.decoder(tar, enc_output, training, look_ahead_mask, dec_padding_mask)
         
