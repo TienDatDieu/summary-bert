@@ -180,11 +180,6 @@ def main(transformer):
         for (batch, (inp, tar)) in enumerate(dataset):
             final_prediction, enc_output = train_step(inp, tar, transformer)
             enc_out.append(enc_output)
-            # 55k samples
-            # we display 3 batch results -- 0th, middle and last one (approx)
-            # 55k / 64 ~ 858; 858 / 2 = 429
-            if batch % 429 == 0:
-                print ('Epoch {} Batch {} Loss {:.4f}'.format(epoch + 1, batch, train_loss.result()))
         
         if (epoch + 1) % 5 == 0:
             ckpt_save_path = ckpt_manager.save()
