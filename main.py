@@ -19,6 +19,9 @@ train_loss = tf.keras.metrics.Mean(name='train_loss')
 from queue import PriorityQueue
 import operator
 from log_manager import logger
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+  tf.config.experimental.set_memory_growth(gpu, True)
 
 
 
@@ -170,7 +173,6 @@ def main(transformer):
 
     dataset, val_input, val_output = read_data(tokenizer)
 
-    final_prediction = []
     enc_out = []
     for epoch in range(EPOCHS):
         print("Epoch {}".format(epoch))
