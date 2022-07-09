@@ -13,4 +13,4 @@ encoder_maxlen = 512
 decoder_maxlen = 200
 
 BUFFER_SIZE = 20000
-BATCH_SIZE = 3
+BATCH_SIZE = 4
