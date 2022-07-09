@@ -22,6 +22,8 @@ def positional_encoding(position, d_model):
 
     pos_encoding = angle_rads[np.newaxis, ...]
 
+    del angle_rads
+
     return tf.cast(pos_encoding, dtype=tf.float32)
 
 
@@ -40,6 +42,8 @@ def scaled_dot_product_attention(q, k, v, mask):
     attention_weights = tf.nn.softmax(scaled_attention_logits, axis=-1)
 
     output = tf.matmul(attention_weights, v)
+    del matmul_qk
+    del scaled_attention_logits
     return output, attention_weights
 
 #@title
@@ -82,8 +86,10 @@ def loss_function(real, pred):
 
     mask = tf.cast(mask, dtype=loss_.dtype)
     loss_ *= mask
-
-    return tf.reduce_sum(loss_)/tf.reduce_sum(mask)
+    final_loss = tf.reduce_sum(loss_)/tf.reduce_sum(mask)
+    del loss_
+    del mask
+    return final_loss
 
 def evaluate(input_document, tokenizer, encoder_maxlen, decoder_maxlen, transformer):
     input_document = '[CLS]' + input_document + '[SEP]'
@@ -168,5 +174,6 @@ def create_masks(inp, tar):
     look_ahead_mask = create_look_ahead_mask(tf.shape(tar)[1])
     dec_target_padding_mask = create_padding_mask(tar)
     combined_mask = tf.maximum(dec_target_padding_mask, look_ahead_mask)
-  
+    del look_ahead_mask
+    del dec_target_padding_mask
     return enc_padding_mask, combined_mask, dec_padding_mask

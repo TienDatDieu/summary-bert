@@ -4,7 +4,7 @@ num_layers = 4
 d_model = 512
 dff = 512
 num_heads = 8
-EPOCHS = 5000
+EPOCHS = 50
 
 encoder_vocab_size = 64000
 decoder_vocab_size = 64000

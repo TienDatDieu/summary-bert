@@ -19,9 +19,18 @@ train_loss = tf.keras.metrics.Mean(name='train_loss')
 from queue import PriorityQueue
 import operator
 from log_manager import logger
-gpus = tf.config.experimental.list_physical_devices('GPU')
-for gpu in gpus:
-  tf.config.experimental.set_memory_growth(gpu, True)
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+  try:
+    # Currently, memory growth needs to be the same across GPUs
+    for gpu in gpus:
+      tf.config.experimental.set_memory_growth(gpu, True)
+    logical_gpus = tf.config.list_logical_devices('GPU')
+    print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+  except RuntimeError as e:
+    # Memory growth must be set before GPUs have been initialized
+    print(e)
+
 
 
 
@@ -131,9 +140,6 @@ def evaluate_beam(input_document, n_best, k_beam, transformer):
 def train_step(inp, tar, transformer):
     tar_inp = tar[:, :-1]
     tar_real = tar[:, 1:]
-
-    
-    
     enc_padding_mask, combined_mask, dec_padding_mask = create_masks(inp, tar_inp)
     with tf.GradientTape() as tape:
         predictions, enc_output, _ = transformer(
@@ -149,7 +155,11 @@ def train_step(inp, tar, transformer):
     optimizer.apply_gradients(zip(gradients, transformer.trainable_variables))
 
     train_loss(loss)
-    
+    del inp 
+    del tar
+    del tar_inp
+    del tar_real
+    del loss
     return predictions, enc_output
 
 
