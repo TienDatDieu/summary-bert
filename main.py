@@ -142,7 +142,7 @@ def train_step(inp, tar, transformer):
     tar_real = tar[:, 1:]
     enc_padding_mask, combined_mask, dec_padding_mask = create_masks(inp, tar_inp)
     with tf.GradientTape() as tape:
-        predictions, enc_output, _ = transformer(
+        predictions, enc_output, att_weights = transformer(
             inp, tar_inp, 
             True, 
             enc_padding_mask, 
@@ -160,6 +160,10 @@ def train_step(inp, tar, transformer):
     del tar_inp
     del tar_real
     del loss
+    del enc_padding_mask
+    del combined_mask
+    del dec_padding_mask
+    del att_weights
     return predictions, enc_output
 
 
@@ -176,10 +180,10 @@ def train(transformer):
             final_prediction, enc_output = train_step(inp, tar, transformer)
             enc_out.append(enc_output)
         
-        if (epoch + 1) % 5 == 0:
+        if (epoch) % 5 == 0:
             ckpt_save_path = ckpt_manager.save()
-            print ('Saving checkpoint for epoch {} at {}'.format(epoch+1, ckpt_save_path))
-            logger.info('Saving checkpoint for epoch {} at {}'.format(epoch+1, ckpt_save_path))
+            print ('Saving checkpoint for epoch {} at {}'.format(epoch, ckpt_save_path))
+            logger.info('Saving checkpoint for epoch {} at {}'.format(epoch, ckpt_save_path))
         
         logger.info('Epoch {} Loss {:.4f}'.format(epoch + 1, train_loss.result()))
         logger.info('Time taken for 1 epoch: {} secs\n'.format(time.time() - start))
