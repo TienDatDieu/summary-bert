@@ -129,10 +129,6 @@ def evaluate_beam(input_document, n_best, k_beam, transformer):
 #@title
 @tf.function
 def train_step(inp, tar, transformer):
-    learning_rate = CustomSchedule(d_model)
-
-    optimizer = tf.keras.optimizers.Adam(learning_rate, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
-
     tar_inp = tar[:, :-1]
     tar_real = tar[:, 1:]
 
@@ -157,19 +153,7 @@ def train_step(inp, tar, transformer):
     return predictions, enc_output
 
 
-def main(transformer):
-
-    
-    #@title
-    checkpoint_path = "checkpoints"
-
-    ckpt = tf.train.Checkpoint(transformer=transformer, optimizer=optimizer)
-
-    ckpt_manager = tf.train.CheckpointManager(ckpt, checkpoint_path, max_to_keep=5)
-
-    if ckpt_manager.latest_checkpoint:
-        ckpt.restore(ckpt_manager.latest_checkpoint)
-        print ('Latest checkpoint restored!!')
+def train(transformer):
 
     dataset, val_input, val_output = read_data(tokenizer)
 
@@ -194,9 +178,9 @@ def main(transformer):
 if __name__ == "__main__":
     word2Topic = joblib.load('word2Topic.jl')
     list_topic_count = joblib.load('list_topic_count.jl')
+    checkpoint_path = "checkpoints"
     learning_rate = CustomSchedule(d_model)
     optimizer = tf.keras.optimizers.Adam(learning_rate, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
-
     transformer = TransformerModel(
         num_layers, 
         d_model, 
@@ -209,8 +193,15 @@ if __name__ == "__main__":
         word2Topic=word2Topic,
         list_topic_count=list_topic_count
         ) 
+    ckpt = tf.train.Checkpoint(transformer=transformer, optimizer=optimizer)
 
-    val_input, val_output = main(transformer)
+    ckpt_manager = tf.train.CheckpointManager(ckpt, checkpoint_path, max_to_keep=5)
+
+    if ckpt_manager.latest_checkpoint:
+        ckpt.restore(ckpt_manager.latest_checkpoint)
+        print ('Latest checkpoint restored!!')
+    
+    val_input, val_output = train(transformer)
 
     for input_document in val_input:
         result_beam = evaluate_beam(input_document, 3, 3, transformer)
