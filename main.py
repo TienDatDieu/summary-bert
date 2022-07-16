@@ -164,7 +164,8 @@ def train_step(inp, tar, transformer):
     del combined_mask
     del dec_padding_mask
     del att_weights
-    return predictions, enc_output
+    del gradients
+    return 
 
 
 def train(transformer):
@@ -177,8 +178,7 @@ def train(transformer):
         start = time.time()
         train_loss.reset_states()
         for (batch, (inp, tar)) in enumerate(dataset):
-            final_prediction, enc_output = train_step(inp, tar, transformer)
-            enc_out.append(enc_output)
+            train_step(inp, tar, transformer)
         
         if (epoch) % 5 == 0:
             ckpt_save_path = ckpt_manager.save()

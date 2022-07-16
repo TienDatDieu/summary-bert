@@ -25,18 +25,18 @@ def read_data(tokenizer, filetrain='train_pharagraph.jl', filetarget = 'target_s
     document = pd.Series(training_input)
     summary = pd.Series(targets)
 
-    # doc_list = []
-    # sum_list = []
-    # for index,doc in enumerate(document):
-    #     if len(doc) < 1000:
-    #         doc_list.append(doc)
-    #         sum_list.append(summary[index])
+    doc_list = []
+    sum_list = []
+    for index,doc in enumerate(document):
+        if len(doc) < 2000:
+            doc_list.append(doc)
+            sum_list.append(summary[index])
 
-    # document = pd.Series(doc_list)
-    # summary = pd.Series(sum_list)
+    document = pd.Series(doc_list)
+    summary = pd.Series(sum_list)
 
-    document = pd.Series(document)
-    summary = pd.Series(summary)
+    # document = pd.Series(document)
+    # summary = pd.Series(summary)
 
     summary = summary.apply(lambda x: tokenizer.bos_token + x + tokenizer.eos_token)
     document = document.apply(lambda x: '[CLS] ' + x + ' [SEP]')
