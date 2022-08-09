@@ -1,0 +1,5 @@
+tensorflow
+transformers
+joblib
+numpy
+pandas
