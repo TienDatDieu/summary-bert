@@ -8,11 +8,11 @@ import time
 from transform import TransformerModel 
 from helper import *
 
-from transformers import PhobertTokenizer
+from transformers import BertTokenizer
 
-tokenizer = PhobertTokenizer.from_pretrained("vinai/phobert-base")
-from transformers import TFAutoModel
-phobert = TFAutoModel.from_pretrained("vinai/phobert-base")
+tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased')
+from transformers import TFBertModel
+model = TFBertModel.from_pretrained("bert-base-multilingual-cased")
 tf.config.run_functions_eagerly(True)
 
 train_loss = tf.keras.metrics.Mean(name='train_loss')
@@ -73,13 +73,13 @@ def evaluate_beam(input_document, n_best, k_beam, transformer):
     input_document = tf.keras.preprocessing.sequence.pad_sequences(input_document, maxlen=encoder_maxlen, padding='post', truncating='post')
     input_document = tf.cast(input_document, dtype=tf.int32)
     encoder_input = tf.expand_dims(input_document[0], 0)
-    decoder_input = tokenizer(tokenizer.bos_token,return_tensors='tf').data['input_ids'].numpy().tolist()[0]
+    decoder_input = tokenizer(tokenizer.special_tokens_map['cls_token'],return_tensors='tf').data['input_ids'].numpy().tolist()[0]
     output = tf.expand_dims(decoder_input, 0)
     decoded_batch = []
     # khởi tạo mảng hypothesis
     beam_hypotheses = []
     # khởi tạo nút root (token là begin)
-    start_node = BeamSearchNode(prev_node=None, token_id=tokenizer.bos_token, log_prob=0)
+    start_node = BeamSearchNode(prev_node=None, token_id=tokenizer.special_tokens_map['cls_token'], log_prob=0)
     # add nút root vào hypothesis (add Tuple, điểm của nó và chính nó)
     beam_hypotheses.append((-start_node.eval(), start_node))
     end_nodes = []
@@ -182,12 +182,11 @@ def train(transformer):
         train_loss.reset_states()
         for (batch, (inp, tar)) in enumerate(dataset):
             train_step(inp, tar, transformer)
-            if (epoch) % 100 == 0:
+            if batch > 0 and (batch) % 100 == 0:
                 ckpt_save_path = ckpt_manager.save()
                 print ('Saving checkpoint for epoch {} at {}'.format(epoch, ckpt_save_path))
                 logger.info('Saving checkpoint for epoch {} at {}'.format(epoch, ckpt_save_path))
-            if batch == 1000:
-                break
+
         
         logger.info('Epoch {} Loss {:.4f}'.format(epoch + 1, train_loss.result()))
         logger.info('Time taken for 1 epoch: {} secs\n'.format(time.time() - start))

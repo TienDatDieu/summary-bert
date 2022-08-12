@@ -1,5 +1,5 @@
 import tensorflow as tf
-from helper import * 
+from helper import *
 from decoderLayer import DecoderLayer
 from log_manager import logger
 #@title
@@ -19,7 +19,6 @@ class Decoder(tf.keras.layers.Layer):
     def call(self, x, enc_output, training , look_ahead_mask, padding_mask):
         seq_len = tf.shape(x)[1]
         attention_weights = {}
-
         x = self.embedding(x)
         x *= tf.math.sqrt(tf.cast(self.d_model, tf.float32))
         x += self.pos_encoding[:, :seq_len, :]

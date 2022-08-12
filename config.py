@@ -6,8 +6,8 @@ dff = 512
 num_heads = 8
 EPOCHS = 10000
 
-encoder_vocab_size = 64000
-decoder_vocab_size = 64000
+encoder_vocab_size = 119547 # tokenizer.vocab_size
+decoder_vocab_size = 119547 # tokenizer.vocab_size
 
 encoder_maxlen = 512
 decoder_maxlen = 200

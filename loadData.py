@@ -38,8 +38,8 @@ def read_data(tokenizer, filetrain='train_pharagraph.jl', filetarget = 'target_s
     # document = pd.Series(document)
     # summary = pd.Series(summary)
 
-    summary = summary.apply(lambda x: tokenizer.bos_token + x + tokenizer.eos_token)
-    document = document.apply(lambda x: '[CLS] ' + x + ' [SEP]')
+    summary = summary.apply(lambda x: tokenizer.special_tokens_map['cls_token'] + x + tokenizer.special_tokens_map['sep_token'])
+    document = document.apply(lambda x: tokenizer.special_tokens_map['cls_token'] + x + tokenizer.special_tokens_map['sep_token'])
 
     document_bert = [tokenizer(d,return_tensors='tf').data['input_ids'].numpy().tolist()[0] for d in document]
     summary_bert = [tokenizer(d,return_tensors='tf').data['input_ids'].numpy().tolist()[0] for d in summary]
