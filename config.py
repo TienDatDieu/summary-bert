@@ -4,7 +4,7 @@ num_layers = 4
 d_model = 512
 dff = 512
 num_heads = 8
-EPOCHS = 10000
+EPOCHS = 1000
 
 encoder_vocab_size = 119547 # tokenizer.vocab_size
 decoder_vocab_size = 119547 # tokenizer.vocab_size
